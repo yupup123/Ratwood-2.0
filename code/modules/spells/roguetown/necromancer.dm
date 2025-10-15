@@ -410,14 +410,12 @@
 			// Set all minions to focus on the enemy target
 			src.process_minions(order_type = "attack", target = target, faction_tag = faction_tag)
 			return
-	if((minions && minions.len) || (simple_minions && simple_minions.len))
-		to_chat(user, "<span class='notice'>You issue an order to your minions.</span>")
+	to_chat(user, "<span class='notice'>You issue an order to your minions.</span>")
 
 //AI processing orders for simple mob undead
 /obj/effect/proc_holder/spell/invoked/command_undead/proc/process_minions(var/order_type, turf/target_location = null, mob/living/target = null, var/faction_tag = null)
 	var/mob/caster = usr
 	var/count = 0
-	var/msg = ""
 
 	for (var/mob/other_mob in oview(12, caster))
 		if (istype(other_mob, /mob/living/simple_animal) && !other_mob.client) // Only simple_mobs for now
@@ -433,20 +431,19 @@
 				switch (order_type)
 					if ("goto")
 						minion.ai_controller.set_blackboard_key(BB_TRAVEL_DESTINATION, target_location)
-						msg = "go to [target_location]"
+						minion.visible_message("[minion.name] shambles toward an indicated location.")
 					if ("follow")
 						minion.ai_controller.set_blackboard_key(BB_FOLLOW_TARGET, target)
-						msg = "follow you."
+						minion.visible_message("[minion.name] begins following [caster] faithfully.")
 					if ("aggressive")
-						msg = "roam free."
 					if ("attack")
 						minion.ai_controller.set_blackboard_key(BB_BASIC_MOB_CURRENT_TARGET, target)
-						msg = "attack [target.name]"
+						minion.visible_message("[minion.name] shambles forward and moves to attack [target].")
 					if("toggle_stance")
 						if(minion == target) // single minion clicked
 							if("neutral" in minion.faction) // currently passive → switch to aggressive
 								minion.faction -= "neutral"
-								msg = "[minion.name] becomes hostile to nearby strangers."
+								to_chat(caster, "[minion.name] becomes hostile to nearby strangers.")
 							else
 								minion.faction += "neutral"
-								msg = "[minion.name] calms down."
+								to_chat(caster, "[minion.name] calms down.")
