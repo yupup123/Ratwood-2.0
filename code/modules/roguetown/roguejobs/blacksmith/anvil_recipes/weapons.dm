@@ -451,6 +451,13 @@
 	created_item = /obj/item/rogueweapon/handclaw
 	craftdiff = 2
 
+/datum/anvil_recipe/weapons/iron/maul
+	name = "Maul (+1 Iron)"
+	req_bar = /obj/item/ingot/iron
+	additional_items = list(/obj/item/ingot/iron)
+	created_item = /obj/item/rogueweapon/mace/maul
+	craftdiff = 4
+
 /// STEEL WEAPONS
 /datum/anvil_recipe/weapons/steel/dagger
 	name = "Dagger, Steel"
@@ -737,6 +744,21 @@
 	req_blade = /obj/item/blade/steel_sword
 	created_item = /obj/item/rogueweapon/sword/falx
 
+/datum/anvil_recipe/weapons/steel/claws
+	name = "Handclaws, Steel (+1 Steel)"
+	req_bar = /obj/item/ingot/steel
+	additional_items = list(/obj/item/ingot/steel)
+	created_item = /obj/item/rogueweapon/handclaw/steel
+	craftdiff = 3
+
+/datum/anvil_recipe/weapons/steel/maul
+	name = "Grand Maul (+2 Steel)"
+	req_bar = /obj/item/ingot/steel
+	additional_items = list(/obj/item/ingot/steel, /obj/item/ingot/steel)
+	created_item = /obj/item/rogueweapon/mace/maul/grand
+	craftdiff = 5
+
+/// UPGRADED WEAPONS
 
 // GOLD
 
