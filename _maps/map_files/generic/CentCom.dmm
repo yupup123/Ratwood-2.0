@@ -3267,6 +3267,10 @@
 	first_time_text = "Murder Pass";
 	name = "Bandit Woods"
 	})
+"Ek" = (
+/obj/structure/chair/frankenstein/zizo,
+/turf/open/floor/rogue/twig,
+/area/rogue/indoors/banditcamp)
 "Eq" = (
 /obj/structure/table/wood{
 	dir = 10;
@@ -6782,13 +6786,13 @@ vp
 Lh
 qv
 uG
-Qo
-UT
-fF
-uG
 fe
 pB
 yx
+uG
+Qo
+UT
+fF
 TO
 nX
 Sm
@@ -7176,7 +7180,7 @@ zQ
 fU
 zQ
 Dv
-nK
+Ek
 nK
 nK
 TO
@@ -7306,9 +7310,9 @@ Zr
 jg
 Lh
 uG
-FB
 HW
 FB
+nK
 TO
 Lh
 Fw
