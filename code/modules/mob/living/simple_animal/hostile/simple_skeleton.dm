@@ -154,7 +154,6 @@
 		if(world.time > damage_check + 5 SECONDS)
 			src.adjustFireLoss(8) //+- one and a half minutes for 150 HP (any skeleton) and two minute for guard skeleton (200 HP)
 
-#undef NECRO_SEE
 /mob/living/simple_animal/hostile/rogue/skeleton/taunted(mob/user)
 	emote("aggro")
 	GiveTarget(user)

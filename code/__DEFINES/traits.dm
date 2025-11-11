@@ -221,7 +221,6 @@
 #define TRAIT_NECRAS_VOW "Necra's Vow"
 #define TRAIT_PESTRAS_BLESSING "Pestra's blessing"
 #define TRAIT_ADRENALINE_RUSH "Adrenaline Rush"
-#define TRAIT_MEDICINE_EXPERT "Medicine Expert"
 #define TRAIT_DYES "Dyemaster"
 #define TRAIT_GOODWRITER "Great Writer"
 #define TRAIT_COMBAT_AWARE	"Combat Aware"
