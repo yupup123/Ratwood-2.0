@@ -16,7 +16,8 @@
 	var/reason
 	var/mob/owner
 	var/list/signals = list()
-
+	var/obj/effect/proc_holder/spell/targeted/shapeshift/shapeshift
+	
 /datum/modular_curse/proc/attach_to_mob(mob/M)
 	owner = M
 
@@ -84,7 +85,7 @@
 	switch(effect)
 		if("buff or debuff")
 			var/debuff_id = effect_args["debuff_id"]
-			if(!debuff_id || !istype(debuff_id, /datum/status_effect))
+			if(!debuff_id)
 				return
 			L.apply_status_effect(debuff_id)
 		if("remove trait")
@@ -123,38 +124,56 @@
 				var/obj/item/organ/penis/penis = L.getorganslot(ORGAN_SLOT_PENIS)
 				var/obj/item/organ/testicles/testicles = L.getorganslot(ORGAN_SLOT_TESTICLES)
 				var/obj/item/organ/breasts/breasts = L.getorganslot(ORGAN_SLOT_BREASTS)
-				arg = ""
+				var/pmax = FALSE
+				var/tmax = FALSE
+				var/bmax = FALSE
 				if(penis)
 					if(penis.penis_size > MIN_PENIS_SIZE)
 						penis.penis_size--
-						arg+= "penis"
+					else
+						pmax = FALSE
 				if(testicles)
 					if(testicles.ball_size > MIN_TESTICLES_SIZE)
 						testicles.ball_size--
-						arg+= "testicles"
+					else
+						tmax = FALSE
 				if(breasts)
 					if(breasts.breast_size > MIN_BREASTS_SIZE )
 						breasts.breast_size--
-						arg+= "breasts"
+					else
+						bmax = FALSE
+				if(!penis && !testicles && !breasts) //nothing to change
+					arg = FALSE
+				if(!pmax && !tmax && !bmax) //nothing was able to change
+					arg = FALSE
 				L.update_body()
 		if("enlarge sex organs")
 			spawn(0)
 				var/obj/item/organ/penis/penis = L.getorganslot(ORGAN_SLOT_PENIS)
 				var/obj/item/organ/testicles/testicles = L.getorganslot(ORGAN_SLOT_TESTICLES)
 				var/obj/item/organ/breasts/breasts = L.getorganslot(ORGAN_SLOT_BREASTS)
-				arg = ""
+				var/pmax = FALSE
+				var/tmax = FALSE
+				var/bmax = FALSE
 				if(penis)
 					if(penis.penis_size < MAX_PENIS_SIZE)
 						penis.penis_size++
-						arg+= "penis"
+					else
+						pmax = FALSE
 				if(testicles)
 					if(testicles.ball_size < MAX_TESTICLES_SIZE)
 						testicles.ball_size++
-						arg+= "testicles"
+					else
+						tmax = FALSE
 				if(breasts)
 					if(breasts.breast_size < MAX_BREASTS_SIZE )
 						breasts.breast_size++
-						arg+= "breasts"
+					else
+						bmax = FALSE
+				if(!penis && !testicles && !breasts) //nothing to change
+					arg = FALSE
+				if(!pmax && !tmax && !bmax) //nothing was able to change
+					arg = FALSE
 				L.update_body()
 		if("nauseate")
 			var/mob/living/carbon/M = L
@@ -213,30 +232,32 @@
 		if("nugget")
 			if(istype(L, /mob/living/carbon/human))	
 				var/mob/living/carbon/human/H = L
-				H.spawn_gold_nugget()*/
+				H.spawn_gold_nugget()
 		if("shapeshift")
 			spawn(0)
-				var/obj/shapeshift_holder/H = locate() in L
-				if(H)
-					arg = FALSE
-				//var/obj/effect/track/the_evidence = new(L.loc)
-				//the_evidence.handle_creation(caster)
-				//the_evidence.track_type = "mixture of shifted animal and humanoid tracks"
-				//the_evidence.ambiguous_track_type = "curious footprints"
-				//the_evidence.base_diff = 6 // very noticable
-				var/mob/living/shape = effect_args["mob_type"]
-
-				H = new(shape,src,L)
-				//shape.name = "[shape] ([caster.real_name])"
-				playsound(L.loc, pick('sound/combat/gib (1).ogg','sound/combat/gib (2).ogg'), 200, FALSE, 3)
-				L.spawn_gibs(FALSE)
-
+				var/shapeshift_type = effect_args ? effect_args["mob_type"] : null
+				if(!shapeshift_type)
+					world.log << "[world.time] SHAPE STEP 3: no mob_type, aborting"
+					return
+				if(istext(shapeshift_type))
+					var/tmp = text2path(shapeshift_type)
+					world.log << "[world.time] SHAPE STEP 4: text2path result = [tmp]"
+					if(ispath(tmp))
+						shapeshift_type = tmp
+						world.log << "[world.time] SHAPE STEP 4: converted to typepath = [shapeshift_type]"
+					else
+						world.log << "[world.time] SHAPE STEP 4: FAILED conversion, aborting"
+						return
+				world.log << "[world.time] SHAPE STEP 4: mob_type ready"
+				shapeshift.shapeshift_type = /mob/living/simple_animal/hostile/retaliate/rogue/cat
+				shapeshift.Shapeshift(L)
+				
 		if("un-shapeshift")
 			spawn(0)
 				var/obj/shapeshift_holder/H = locate() in L
 				if(!H)
 					arg = FALSE
-				H.restore()
+				H.restore()*/
 		if("gib")
 			if(!L)
 				return
@@ -253,6 +274,8 @@
 
 /datum/modular_curse/proc/notify_player_of_effect(arg)
 	if(!owner)
+		return
+	if(arg == FALSE)
 		return
 	var/flavor_text_self = ""
 	var/flavor_text_other = ""
@@ -429,12 +452,13 @@
 		if("explode")
 			effect_text_self = "you to explode"
 			effect_text_other = "they are caught in a sudden explosion"
+			/*
 		if("shapeshift")
 			effect_text_self = "you to change forms"
 			effect_text_other = "they change forms"
 		if("un-shapeshift")
 			effect_text_self = "you to return to normal"
-			effect_text_other = "they change forms"
+			effect_text_other = "they change forms"*/
 		if("gib")
 			effect_text_self = "you to violently break apart"
 			effect_text_other = "they violently break apart"
@@ -798,9 +822,8 @@
 		//"difficult ambush",
 		"explode",
 		//"nugget",
-		"shapeshift",
-		"un-shapeshift",
-		//"gib and reset body",
+		/*"shapeshift",
+		"un-shapeshift",*/
 		"gib"
 	)
 
