@@ -14,6 +14,7 @@
 	var/list/effect_args
 	var/admin
 	var/reason
+	var/character_name
 	var/mob/owner
 	var/list/signals = list()
 	var/obj/effect/proc_holder/spell/targeted/shapeshift/shapeshift = new
@@ -543,7 +544,8 @@
 	effect_proc = null,
 	list/effect_args = null,
 	admin_name = "unknown",
-	reason = "No reason supplied."
+	reason = "No reason supplied.",
+	extra = null
 )
 	if(!key || !curse)
 		return FALSE
@@ -569,7 +571,9 @@
 		"effect"       = effect_proc,
 		"effect_args"  = effect_args,
 		"admin"        = admin_name,
-		"reason"       = reason
+		"reason"       = reason,
+		"character_name" = (extra ? extra["character_name"] : null)
+
 	)
 
 	fdel(json_file)
@@ -662,6 +666,7 @@
 			existingC.effect_args  = C["effect_args"]
 			existingC.admin        = C["admin"]
 			existingC.reason       = C["reason"]
+			existingC.character_name = C["character_name"]
 			continue
 
 		// create NEW curse datum
@@ -677,6 +682,7 @@
 		newC.effect_args  = C["effect_args"]
 		newC.admin        = C["admin"]
 		newC.reason       = C["reason"]
+		newC.character_name = C["character_name"]
 
 		M.curses[curse_name] = newC
 
@@ -686,7 +692,8 @@
 
 	for(var/curse_name in MN.curses)
 		var/datum/modular_curse/C = MN.curses[curse_name]
-
+		if(C.character_name && (M.real_name != C.character_name))
+			continue
 		if(C.owner == M)
 			continue
 
@@ -727,7 +734,23 @@
 		usr << "Invalid target."
 		return
 
+	// ---- Curse binding type ----
+	var/list/binding_choices = list("ckey curse", "character curse")
+
+	var/binding = input(
+		src,
+		"Apply this curse to the player's account, or only this specific character?",
+		"Curse Binding Type"
+	) as null|anything in binding_choices
+
+	if(!binding)
+		return
+
 	var/key = target.ckey
+	var/is_character_bound = (binding == "character curse")
+	var/character_name = null
+	if(is_character_bound)
+		character_name = target.real_name
 
 	// ---- Trigger Selection ----
 	//commented out do not currently have signals
@@ -996,7 +1019,7 @@
 		src,
 		"Reason for curse (admin note):",
 		"Reason",
-		"Change me or I determine you shitmin"
+		"Change me or you are shitmin"
 	) as null|text
 
 	var/list/flavor_list = list(
@@ -1014,12 +1037,19 @@
 		"Flavor"
 	) as null|anything in flavor_list
 
+	if(!flavor)
+		return
+
 	// ---- Generate name ----
 	var/cname_safe_effect = replacetext(effect_proc, " ", "_")
 	var/cname_safe_trigger = replacetext(trigger, " ", "_")
 	var/curse_name = "[chance]percent_[cname_safe_effect]_[cname_safe_trigger]_[rand(1000,9999)]"
 
 	// ---- Apply ----
+	var/list/extra = null
+	if(is_character_bound)
+		extra = list("character_name" = character_name)
+
 	var/success = apply_player_curse(
 		key,
 		curse_name,
@@ -1031,9 +1061,9 @@
 		effect_proc,
 		effect_args,
 		usr.ckey,
-		reason
+		reason,
+		extra
 	)
-
 	if(success)
 		src << "<span class='notice'>Applied curse <b>[curse_name]</b> to [target].</span>"
 		target << "<span class='warning'>A strange curse settles upon you…</span>"
