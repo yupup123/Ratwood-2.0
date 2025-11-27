@@ -271,7 +271,7 @@
 	regenerate_icons()
 	set_resting(FALSE)
 
-/mob/living/carbon/proc/Taurize(taur_type = /obj/item/bodypart/taur, color = "#ffffff", markings = "#ffffff")
+/mob/living/carbon/proc/Taurize(taur_type = /obj/item/bodypart/taur, color = "#ffffff", markings = "#ffffff", tertiary = "#ffffff")
 	for(var/X in bodyparts)
 		var/obj/item/bodypart/O = X
 		// drop taur tails too
@@ -283,6 +283,8 @@
 	T.taur_color = color
 	if(markings)
 		T.taur_markings = markings
+	if(tertiary)
+		T.taur_tertiary = tertiary
 	T.attach_limb(src)
 
 	if(shoes)

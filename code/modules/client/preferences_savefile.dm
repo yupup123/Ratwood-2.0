@@ -529,6 +529,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["taur_type"]			>> taur_type
 	S["taur_color"]			>> taur_color
 	S["taur_markings"]		>> taur_markings
+	S["taur_tertiary"]		>> taur_tertiary
 
 /datum/preferences/proc/_load_familiar_prefs(S)
 	S["familiar_name"]					>> familiar_prefs.familiar_name
@@ -700,6 +701,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		taur_type = null
 	taur_color = sanitize_hexcolor(taur_color, 6, 0)
 	taur_markings = sanitize_hexcolor(taur_markings, 6, 0)
+	taur_tertiary = sanitize_hexcolor(taur_tertiary, 6, 0)
 
 	S["body_markings"] >> body_markings
 	body_markings = SANITIZE_LIST(body_markings)
@@ -772,6 +774,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["taur_type"]			, taur_type)
 	WRITE_FILE(S["taur_color"]			, taur_color)
 	WRITE_FILE(S["taur_markings"]		, taur_markings)
+	WRITE_FILE(S["taur_tertiary"]		, taur_tertiary)
 	WRITE_FILE(S["culinary_preferences"], culinary_preferences)
 
 	//Custom names

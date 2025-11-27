@@ -24,12 +24,14 @@
 	// (we don't use icon_state to avoid duplicate rendering on dropped organs)
 	var/taur_icon_state = "naga_s"
 	var/taur_markings_state = null
+	var/taur_tertiary_state = null
 
 	// We can Blend() a color with the base greyscale color, only some tails support this
 	var/has_taur_color = FALSE
 	var/color_blend_mode = BLEND_ADD
 	var/taur_color = null
 	var/taur_markings = null
+	var/taur_tertiary = null
 
 	// Clip Masks allow you to apply a clipping filter to some other parts of human rendering to avoid anything overlapping the tail.
 	// Specifically: update_inv_cloak, update_inv_shirt, update_inv_armor, and update_inv_pants.
@@ -61,6 +63,10 @@
 	if(has_taur_color)
 		taur_m.Blend(taur_markings, color_blend_mode)
 
+	var/icon/taur_t = new/icon("icon" = icon, "icon_state" = taur_tertiary_state, "dir" = image_dir)
+	if(has_taur_color)
+		taur_t.Blend(taur_tertiary, color_blend_mode)
+
 	var/image/working = image(tail_s)
 	// because these can overlap other organs, we need to layer slightly higher
 	working.layer = -BODYPARTS_LAYER // -FRONT_MUTATIONS_LAYER = tail renders over tits, -BODYPARTS_LAYER = tail renders underneath the tits, as it should
@@ -70,8 +76,13 @@
 	markings.layer = -BODY_ADJ_LAYER
 	markings.pixel_x = offset_x
 
+	var/image/tertiary = image(taur_t)
+	tertiary.layer = -BODY_ADJ_LAYER
+	tertiary.pixel_x = offset_x
+
 	. += working
 	. += markings
+	. += tertiary
 
 /*********************************/
 /* TAUR TYPES                    */
