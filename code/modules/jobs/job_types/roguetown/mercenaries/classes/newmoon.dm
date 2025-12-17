@@ -9,6 +9,9 @@
 	allowed_races = list(
 		/datum/species/tabaxi,
 		/datum/species/anthromorph,
+		/datum/species/demihuman,
+		/datum/species/elf/wood,
+		/datum/species/tieberian
 	)
 	outfit = /datum/outfit/job/roguetown/mercenary/newmoon
 	cmode_music = 'sound/music/combat_desertrider.ogg'
